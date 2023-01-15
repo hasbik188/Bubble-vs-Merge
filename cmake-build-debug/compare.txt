@@ -1,0 +1,5 @@
+Bubble Sort                   Merge(top-down) 
+Stable Check: stable     stable
+Time:0.277603  0.0072352
+
+Merge is faster then Bubble Sort
