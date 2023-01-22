@@ -3,7 +3,7 @@
 #include<string>
 #include<tuple>
 #include<chrono>
-
+//Ваяй Михаил - 1 ключ - по убыванию, 2 ключ - по убыванию, алгоритмы: Простой обмен (улучшенная), Слияние  (простое, рекурсивная реализация)
 struct Rooms
 {
     char letter;
@@ -26,6 +26,7 @@ struct record
     FIOs FIO;
     times time;
 };
+
 void GetSize(int& size)
 {
     std::fstream(file);
@@ -35,6 +36,7 @@ void GetSize(int& size)
     size = std::stoi(line);
     file.close();
 }
+//Считываем массивы
 void GetArray(record*& RecArr, record*& CopyRecArr, int size)
 {
     std::fstream(file);
@@ -75,7 +77,8 @@ void PrintProc(record* RecArr, int size, double time, int flag, std::string file
 {
     std::ofstream(file);
     file.open(filename);
-    file << time << "s\n"; !flag ? file << " stable\n" : file << "unstable\n";
+    file << time << "s\n";
+    !flag ? file << " stable\n" : file << "unstable\n";
     for (auto i = 0; i < size; ++i)
     {
         file << RecArr[i].Room.letter << RecArr[i].Room.digit << " ";
@@ -84,22 +87,24 @@ void PrintProc(record* RecArr, int size, double time, int flag, std::string file
     }
     file.close();
 }
+
 void PrintCompare(int flag1, int flag2, double time1, double time2, std::string filename)
 {
     std::ofstream(file);
     file.open(filename);
-    file << "Bubble Sort                   Merge(top-down) \n";
-    file << "Stable Check: stable ";
-    flag2 == 0 ? file << "    stable\n" : file << "unstable\n";
+    file << "Bubble Sort     Merge(top-down) \n";
+    file << "stable ";
+    flag2 == 0 ? file << " stable\n" : file << "unstable\n";
     file << "Time:" << time1 << "  " << time2 << std::endl << std::endl;
-    time1 > time2 ? file << "Merge is faster then Bubble Sort\n" : time1 == time2 ? file << "They are equal\n" : file << "Bubble Sort is faster then Merge\n";
+    if (time1 > time2)
+        file << "Merge is faster then Bubble Sort\n";
+    if (time1 < time2)
+        file << "Bubble Sort is faster then Merge\n";
+    else if (time1 == time2)
+        file << "They are equal\n";
+
 }
-void Swap(auto* xp, auto* yp)
-{
-    auto temp = *xp;
-    *xp = *yp;
-    *yp = temp;
-}
+
 void BubbleSort(record*& array, int size){
     bool swapped = true; int i = 0;
     while (swapped)
@@ -107,12 +112,16 @@ void BubbleSort(record*& array, int size){
         swapped = false;
         for (int j = 0;j < size - i - 1; j++){
             if (std::tie(array[j].Room.letter,array[j].Room.digit) < (std::tie(array[j+1].Room.letter, array[j+1].Room.digit))){
-                Swap(&array[j], &array[j+1]);
+                auto temp = array[j];
+                array[j] = array[j+1] ;
+                array[j+1] = temp;
                 swapped = true;
             }
             else if((std::tie(array[j].Room.letter,array[j].Room.digit) == (std::tie(array[j+1].Room.letter, array[j+1].Room.digit))) &&
             (std::tie(array[j].FIO.F,array[j].FIO.I,array[j].FIO.O) < (std::tie(array[j+1].FIO.F,array[j+1].FIO.I,array[j+1].FIO.O)))) {
-                Swap(&array[j], &array[j + 1]);
+                auto temp = array[j];
+                array[j] = array[j+1] ;
+                array[j+1] = temp;
                 swapped = true;
             }
         }
@@ -175,6 +184,7 @@ void MergeSort(record*& array, int start, int end) {
         merge(array, start, mid, end);
     }
 }
+
 void MergeTimer(double& time, record*& array, int size){
     std::chrono::time_point < std::chrono::high_resolution_clock>start, end;
     start = std::chrono::high_resolution_clock::now();
@@ -188,18 +198,17 @@ void MergeTimer(double& time, record*& array, int size){
 int main() {
     int flag1 = 0, flag2 = 0,size=0;
     double time1 = 0, time2 = 0;
-
     GetSize(size);
     record* array = new record[size];
     record* rec_array = new record[size];
     GetArray(array, rec_array,size);
 
     BubbleTimer(time1,array,size);
-    PrintProc(array, size, time1, flag1, "BubbleSort_output.txt");
+    PrintProc(array, size, time1, flag1, "BubbleSort.txt");
 
     MergeTimer(time2,rec_array,size);
-    PrintProc(rec_array, size, time2, flag2, "MergeSort_output.txt");
+    PrintProc(rec_array, size, time2, flag2, "MergeSort.txt");
 
-    PrintCompare(flag1,flag2,time1,time2,"compare.txt");
+    PrintCompare(flag1,flag2,time1,time2,"Together.txt");
     return 0;
 }
